@@ -5,7 +5,7 @@ ActiveRecord\Connection::$datetime_format = 'Y-m-d H:i:s';
 
 $configs->env->add('development');
 
-$configs->env->development->baseURI = '/git/local/';
+$configs->env->development->baseURI = '/git/local1/';
 
 $configs->env->development->database->setConnectionData(array(
   'host' => 'localhost',
@@ -14,6 +14,9 @@ $configs->env->development->database->setConnectionData(array(
   'dbname' => 'transporteapp'
   ));
 
+$configs->env->development->auth->setURLs('/git/local1/home/', '/git/local1/login/');
+$configs->env->development->auth->setURLs('/git/local1/admin/home/', '/git/local1/login/', 'admin');
+  
 /*
   //Globais
   $configs->title = 'Titulo customizado';
