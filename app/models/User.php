@@ -71,4 +71,21 @@ class User extends \HXPHP\System\Model
 		}
 		return $callbackObj;
 	}
+	public static function login(array $post){
+
+		$user = self::find_by_username($post['username']);
+
+		if(!is_null($user)){
+			$password = \HXPHP\System\Tools::hashHX($post['password'], $user->salt);
+
+			if (loginAttempt::ExistemTentativas($user->id)) {
+				if($password['password'] === $user->password){
+					loginAttempt::LimparTentativas($user->id);
+				}
+				else{
+					loginAttempt::RegistrarTentativas($user->id);
+				}
+			}
+		}
+	}
 }
