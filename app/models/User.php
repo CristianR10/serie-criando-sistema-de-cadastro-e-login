@@ -109,8 +109,10 @@ class User extends \HXPHP\System\Model
 		$callbackObj->code = null;
 		$callbackObj->tentativas_restantes = null;
 		$user = self::find_by_username($post['username']);
+
 		if (!is_null($user)) {
 			$password = \HXPHP\System\Tools::hashHX($post['password'], $user->salt);
+
 			if ($user->status === 1) {
 				if (LoginAttempt::ExistemTentativas($user->id)) {
 					if ($password['password'] === $user->password) {
