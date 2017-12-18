@@ -1,7 +1,7 @@
 <?php
 class RecuperarController extends \HXPHP\System\Controller
 {
-    public function __construct($configs)
+	public function __construct($configs)
 	{
 		parent::__construct($configs);
 		$this->load(
@@ -10,89 +10,108 @@ class RecuperarController extends \HXPHP\System\Controller
 			$configs->auth->after_logout,
 			true
 		);
-
 		$this->auth->redirectCheck(true);
-	}
-
-	public function solicitarAction()
-	{	
-		$this->view->setFile('index');
-		$this->load('Modules\Messages','password-recovery');
+		$this->view->setTitle('SistemaHX - Altere sua senha');
+		$this->load('Modules\Messages', 'password-recovery');
 		$this->messages->setBlock('alerts');
-
+	}
+	public function solicitarAction()
+	{
+		$this->view->setFile('index');
 		$this->request->setCustomFilters(array(
 			'email' => FILTER_VALIDATE_EMAIL
-			));
+		));
 		$email = $this->request->post('email');
-
 		$error = null;
-
 		if (!is_null($email) && $email !== false) {
 			$validar = Recovery::validar($email);
-
-			if($validar->status === false){
+			if ($validar->status === false) {
 				$error = $this->messages->getByCode($validar->code);
 			}
-			else{
+			else {
 				$this->load(
-					'Services\PasswprdRecovery'
+					'Services\PasswordRecovery',
 					$this->configs->site->url . $this->configs->baseURI . 'recuperar/redefinir/'
 				);
-
 				Recovery::create(array(
 					'user_id' => $validar->user->id,
 					'token' => $this->passwordrecovery->token,
 					'status' => 0
-					));
+				));
 				$message = $this->messages->messages->getByCode('link-enviado', array(
 					'message' => array(
-						$validar->user->name->name,
+						$validar->user->name,
 						$this->passwordrecovery->link,
 						$this->passwordrecovery->link
-
-						)
-					));
-
+					)
+				));
 				$this->load('Services\Email');
-
-				$this->email->send(
+				$envioDoEmail = $this->email->send(
 					$validar->user->email,
-					'HXPHP -'$message['subject'],
+					'HXPHP - ' . $message['subject'],
 					$message['message'] . 'HXPHP',
 					array(
 						'email' => $this->configs->mail->from_mail,
-						'remetente' => $this->config->mail->from
-						)
-					);
-
+						'remetente' => $this->configs->mail->from 
+					)
+				);
 				if ($envioDoEmail === false) {
-					$error = $this->messages->getByCode('nenhum-usuario-encontrado');
+					$error = $this->messages->getByCode('email-nao-enviado');
 				}
 			}
 		}
-		else{
+		else {
 			$error = $this->messages->getByCode('nenhum-usuario-encontrado');
 		}
-
 		if (!is_null($error)) {
 			$this->load('Helpers\Alert', $error);
 		}
-		else{
+		else {
 			$success = $this->messages->getByCode('link-enviado');
-
 			$this->view->setFile('blank');
-
 			$this->load('Helpers\Alert', $success);
 		}
 	}
-
 	public function redefinirAction($token)
 	{
-
+		$validarToken = Recovery::validarToken($token);
+		$error = null;
+		if ($validarToken->status === false) {
+			$error = $this->messages->getByCode($validarToken->code);
+		}
+		else {
+			$this->view->setVar('token', $token);
+		}
+		if ( ! is_null($error)) {
+			$this->view->setFile('blank');
+			$this->load('Helpers\Alert', $error);
+		}
 	}
-
 	public function alterarSenhaAction($token)
 	{
-
+		$this->view->setFile('redefinir');
+		$validarToken = Recovery::validarToken($token);
+		$error = null;
+		if ($validarToken->status === false) {
+			$this->view->setFile('blank');
+			$error = $this->messages->getByCode($validarToken->code);
+		}
+		else {
+			$this->view->setVar('token', $token);
+			$password = $this->request->post('password');
+			if ( ! is_null($password)) {
+				$atualizarSenha = User::atualizarSenha($validarToken->user, $password);
+				if ($atualizarSenha === true) {
+					Recovery::limpar($validarToken->user->id);
+					$this->view->setPath('login')
+								->setFile('index');
+					$success = $this->messages->getByCode('senha-redefinida');
+					$this->load('Helpers\Alert', $success);
+				}
+			}
+		}
+		if ( ! is_null($error))
+			$this->load('Helpers\Alert', $error);
 	}
+	
 }
