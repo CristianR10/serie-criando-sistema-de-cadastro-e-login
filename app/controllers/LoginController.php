@@ -23,7 +23,8 @@ class LoginController extends \HXPHP\System\Controller
 		if (!empty($post)) {
 			$login = User::login($post);
 			if ($login->status === true) {
-				$this->auth->login($login->user->id, $login->user->username, $login->user->role->role);
+				$this->auth->login($login->user->id, 
+				$login->user->username, $login->user->role->role);
 			}
 			else {
 				$this->load('Modules\Messages', 'auth');

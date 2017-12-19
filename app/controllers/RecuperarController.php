@@ -98,14 +98,19 @@ class RecuperarController extends \HXPHP\System\Controller
 		}
 		else {
 			$this->view->setVar('token', $token);
+
 			$password = $this->request->post('password');
+
 			if ( ! is_null($password)) {
 				$atualizarSenha = User::atualizarSenha($validarToken->user, $password);
 				if ($atualizarSenha === true) {
 					Recovery::limpar($validarToken->user->id);
+
 					$this->view->setPath('login')
 								->setFile('index');
+
 					$success = $this->messages->getByCode('senha-redefinida');
+					
 					$this->load('Helpers\Alert', $success);
 				}
 			}

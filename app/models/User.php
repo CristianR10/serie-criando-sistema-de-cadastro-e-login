@@ -153,6 +153,6 @@ class User extends \HXPHP\System\Model
 		$password = \HXPHP\System\Tools::hashHX($newPassword);
 		$user->password = $password['password'];
 		$user->salt = $password['salt'];
-		return $user->save(false);
+		return $user->save(false); // Desabilita a verificação
 	}
 }
