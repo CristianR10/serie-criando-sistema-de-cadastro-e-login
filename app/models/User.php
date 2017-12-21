@@ -75,27 +75,36 @@ class User extends \HXPHP\System\Model
 		$user->name = $post['name'];
 		$user->email = $post['email'];
 		$user->username = $post['username'];
+
 		if (isset($post['salt'])) {
 			$user->password = $post['password'];
 			$user->salt = $post['salt'];
 		}
+
 		$exists_mail = self::find_by_email($post['email']);
+
 		if (!is_null($exists_mail) && intval($user_id) !== intval($exists_mail->id)) {
 			array_push($callbackObj->errors, 'Oops! Já existe um usuário com este e-mail cadastrado. Por favor, escolha outro e tente novamente');
 			return $callbackObj;
 		}
+
 		$exists_username = self::find_by_username($post['username']);
+
 		if (!is_null($exists_username) && intval($user_id) !== intval($exists_username->id)) {
 			array_push($callbackObj->errors, 'Oops! Já existe um usuário com o login <strong>' . $post['username'] . '</strong> cadastrado. Por favor, escolha outro e tente novamente');
 			return $callbackObj;
 		}
+
 		$atualizar = $user->save(false);
+
 		if ($atualizar) {
 			$callbackObj->user = $user;
 			$callbackObj->status = true;
 			return $callbackObj;
 		}
+
 		$errors = $cadastrar->errors->get_raw_errors();
+		
 		foreach ($errors as $field => $message) {
 			array_push($callbackObj->errors, $message[0]);
 		}
