@@ -51,9 +51,11 @@ class PerfilController extends \HXPHP\System\Controller
 				));
 			}
 			else {
+				//Criar um Upload
+//----------------------------------------------------------------------------//
 				if (isset($_FILES['image']) && !empty($_FILES['image']['tmp_name'])) {
 					$uploadUserImage = new upload($_FILES['image']);
-
+					
 					if ($uploadUserImage->uploaded) {
 						$image_name = md5(uniqid());
 						$uploadUserImage->file_new_name_body = $image_name;
@@ -62,7 +64,9 @@ class PerfilController extends \HXPHP\System\Controller
 						$uploadUserImage->image_x = 500;
 						$uploadUserImage->image_ratio_y = true;
 
-						$dir_path = ROOT_PATH . DS . 'public' . DS . 'uploads' . DS . 'users' . DS . $atualizarUsuario->user->id . DS;
+						$dir_path = ROOT_PATH . DS . 'public' . DS . 
+						'uploads' . DS . 'users' . DS . 
+						$atualizarUsuario->user->id . DS;
 						$uploadUserImage->process($dir_path);
 
 						if ($uploadUserImage->processed) {
