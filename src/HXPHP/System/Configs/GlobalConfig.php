@@ -40,7 +40,8 @@ class GlobalConfig
 		$this->controllers->notFound = 'Error404Controller';
 
 		//General
-		$this->title = 'HXPHP Framework';
+		// Muda todos os Titulos
+		$this->title = 'Transporte I.';
 
 		return $this;
 	}

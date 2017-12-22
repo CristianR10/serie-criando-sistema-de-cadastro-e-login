@@ -9,7 +9,7 @@
     'password' => '',
     'dbname' => 'transporteapp'
   ));
-  $configs->env->development->auth->setURLs('/git/local1/home/', '/git/local1/login/');
+  $configs->env->development->auth->setURLs('/git/local1/home', '/git/local1/login');
   $configs->env->development->menu->setMenus(array(
     'Home/dashboard' => '%baseURI%/home',
     'Editar perfil/cog' => '%baseURI%/perfil/editar',
