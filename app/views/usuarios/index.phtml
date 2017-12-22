@@ -18,11 +18,15 @@
 					foreach ($view_users as $user) : 
 			?>
 						<tr>
+							<!--Campo que imprime as variasveis dos usuários -->
+
 							<td><?php echo $user->name; ?></td>
 							<td><?php echo $user->email; ?></td>
 							<td><?php echo $user->username; ?></td>
 							<td>
 								<?php if ($user->status === 0) : ?>
+								
+								<!-- Botões com configuração excluir/bloquear/desbloquear -->
 									<a href="<?php echo BASE . 'usuarios/desbloquear/' . $user->id; ?>" class="btn btn-xs btn-success">
 										<i class="fa fa-unlock"></i> Desbloquear
 									</a>	
@@ -35,6 +39,8 @@
 								<a href="<?php echo BASE . 'usuarios/excluir/' . $user->id; ?>" class="btn btn-xs btn-danger">
 									<i class="fa fa-trash"></i> Excluir
 								</a>
+
+
 							</td>
 						</tr>
 			<?php 
