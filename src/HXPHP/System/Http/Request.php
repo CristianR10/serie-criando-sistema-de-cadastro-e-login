@@ -1,8 +1,11 @@
 <?php
 namespace HXPHP\System\Http;
+
 use HXPHP\System\Tools;
+
 class Request
 {
+
     /**
      * Atributos
      * @var null
@@ -11,19 +14,28 @@ class Request
     public $controller = 'IndexController';
     public $action = 'indexAction';
     public $params = [];
+
     /**
      * Filtros customizados de tratamento
      * @var array
      */
     public $custom_filters = [];
+
     /**
      * Método construtor
      */
-    public function __construct(string $baseURI = '', string $controller_directory = '')
+
+    public function __construct($baseURI = '', $controller_directory = '')
+    {
+        $this->initialize($baseURI, $controller_directory);
+        return $this;
+    }
+
+  /*  public function __construct(string $baseURI = '', string $controller_directory = '')
     {
         $this->subfolder = 'default';
         $this->initialize($baseURI, $controller_directory);
-    }
+    }*/
     /**
      * Define os parâmetros do mecanismo MVC
      * @return object Retorna o objeto com as propriedades definidas
@@ -107,17 +119,14 @@ class Request
      * @param  string $name Nome do parâmetro
      * @return null         Retorna o array POST geral ou em um índice específico
      */
-    public function post(string $name = null)
+   public function post($name = null)
     {
         $post = $this->filter($_POST, INPUT_POST, $this->custom_filters);
-        if (!$name) {
-            foreach ($post as $field => $value)
-                $post[$field] = is_array($value) ? array_map('trim', $value) : trim($value);
+        if (!$name)
             return $post;
-        }
-        if (!isset($post[$name]))
+        if (!($post[$name]))
             return null;
-        return trim($post[$name]);
+        return $post[$name];
     }
     /**
      * Obtém os dados da superglobal $_SERVER
